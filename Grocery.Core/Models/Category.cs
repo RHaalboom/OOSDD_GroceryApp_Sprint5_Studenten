@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Grocery.Core.Models
 {
-    public class Category
+    public class Category : Model
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
+
+        public Category(int id, string name) : base(id, name)
+        {
+        }
     }
 }
