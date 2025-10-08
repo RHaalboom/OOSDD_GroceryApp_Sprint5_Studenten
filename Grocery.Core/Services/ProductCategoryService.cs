@@ -31,7 +31,7 @@ namespace Grocery.Core.Services
         {
             foreach (ProductCategory pc in productCategory)
             {
-                pc.Product = _productRepository.Get(pc.ProductId) ?? new(0, "", 0);
+                pc.Product = _productRepository.Get(pc.ProductId) ?? new(0, "", 0, 0);
             }
         }
     }
