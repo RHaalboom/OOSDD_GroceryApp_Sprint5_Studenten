@@ -22,8 +22,8 @@ namespace Grocery.App.ViewModels
         [RelayCommand]
         public async Task SelectCategory(Category category)
         {
-            Dictionary<string, object> paramater = new() { { nameof(Category), category } };
-            await Shell.Current.GoToAsync($"{nameof(Views.ProductCategoriesView)}?Title={category.Name}", true, paramater);
+            Dictionary<string, object> parameter = new() { { nameof(Category), category } };
+            await Shell.Current.GoToAsync($"{nameof(ProductCategoriesView)}?Title={category.Name}", true, parameter);
         }
 
         public override void OnAppearing()
