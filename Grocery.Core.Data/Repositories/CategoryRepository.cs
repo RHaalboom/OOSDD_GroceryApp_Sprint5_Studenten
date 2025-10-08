@@ -18,6 +18,7 @@ namespace Grocery.Core.Data.Repositories
             categories = [
                 new Category(1, "Zuivel"),
                 new Category(2, "Granen" ),
+                new Category(3, "Bier" )
                 ];
         }
 

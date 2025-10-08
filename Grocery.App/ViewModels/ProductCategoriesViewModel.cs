@@ -45,29 +45,36 @@ namespace Grocery.App.ViewModels
         {
             AvailableProducts.Clear();
 
-            // Get all product-category mappings (Product is populated by the service)
-            var allProductCategories = _productCategoryService.GetAll();
+            if (Category == null) return;
 
-            var seenProductIds = new HashSet<int>();
+            // Collect product ids that are already assigned to the selected category
+            var inCategory = _productCategoryService
+                .GetByAllOnCategoryId(Category.Id)
+                .Where(pc => pc?.Product != null)
+                .Select(pc => pc.ProductId)
+                .ToHashSet();
 
-            foreach (var pc in allProductCategories)
+            // Get all products from all mappings (service fills Product)
+            var allProducts = _productCategoryService
+                .GetAll()
+                .Where(pc => pc?.Product != null)
+                .Select(pc => pc.Product)
+                .GroupBy(p => p.Id)
+                .Select(g => g.First());
+
+            foreach (var product in allProducts)
             {
-                if (pc == null || pc.Product == null) continue;
+                if (product == null) continue;
 
-                // Skip products that belong to the selected category
-                if (pc.CategoryId == Category.Id) continue;
-
-                var product = pc.Product;
+                // Exclude products that are present in the selected category
+                if (inCategory.Contains(product.Id)) continue;
 
                 // Apply search filter (case-insensitive). If searchText is empty, include all.
                 if (!string.IsNullOrWhiteSpace(searchText) &&
                     !product.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
                     continue;
 
-                if (seenProductIds.Add(product.Id))
-                {
-                    AvailableProducts.Add(product);
-                }
+                AvailableProducts.Add(product);
             }
         }
 
@@ -90,11 +97,21 @@ namespace Grocery.App.ViewModels
             if (product == null) return;
             if (Category == null) return;
 
-            var mapping = new ProductCategory(0, Category.Name, product.Id, Category.Id);
-            _productCategoryService.Add(mapping);
+            // Prevent adding the same product twice to the currently selected category
+            if (ProductCategories.Any(pc => pc.ProductId == product.Id && pc.CategoryId == Category.Id))
+                return;
 
-            LoadProductCategoriesByCategory(Category);
-            GetAvailableProducts();
+            var mapping = new ProductCategory(0, Category.Name, product.Id, Category.Id);
+            var added = _productCategoryService.Add(mapping);
+
+            if (added != null)
+            {
+                ProductCategories.Add(added);
+
+                var toRemove = AvailableProducts.FirstOrDefault(p => p.Id == product.Id);
+                if (toRemove != null)
+                    AvailableProducts.Remove(toRemove);
+            }
         }
     }
 }
