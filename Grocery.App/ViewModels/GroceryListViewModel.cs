@@ -26,7 +26,7 @@ namespace Grocery.App.ViewModels
         public async Task SelectGroceryList(GroceryList groceryList)
         {
             Dictionary<string, object> paramater = new() { { nameof(GroceryList), groceryList } };
-            await Shell.Current.GoToAsync($"{nameof(Views.GroceryListItemsView)}?Titel={groceryList.Name}", true, paramater);
+            await Shell.Current.GoToAsync($"{nameof(Views.GroceryListItemsView)}?Title={groceryList.Name}", true, paramater);
         }
 
         [RelayCommand]
