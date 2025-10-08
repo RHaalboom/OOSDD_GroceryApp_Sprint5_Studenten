@@ -27,9 +27,15 @@ namespace Grocery.Core.Data.Repositories
             return productCategoryList;
         }
 
-        public List<ProductCategory> GetByAllOnCaterogyId(int id) 
+        public List<ProductCategory> GetByAllOnCaterogyId(int id)
         {
             return productCategoryList.Where(c => c.CategoryId == id).ToList();
+        }
+
+        public ProductCategory Add(ProductCategory item)
+        {
+            productCategoryList.Add(item);
+            return item;
         }
     }
 }
