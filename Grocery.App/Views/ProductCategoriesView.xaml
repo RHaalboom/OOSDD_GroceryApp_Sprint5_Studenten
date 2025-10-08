@@ -4,6 +4,7 @@
              xmlns:m="clr-namespace:Grocery.Core.Models;assembly=Grocery.Core"
              xmlns:vm="clr-namespace:Grocery.App.ViewModels"
              x:Class="Grocery.App.Views.ProductCategoriesView"
+             x:Name="ProductCategoriesPage"
              x:DataType="vm:ProductCategoriesViewModel"
              Title="ProductCategoriesView">
 
@@ -13,9 +14,14 @@
         </Grid>
     </Shell.TitleView>
 
-    <Grid>
-        <Border Grid.Column="0" Stroke="#C49B33" StrokeThickness="4" Padding="10" Margin="10" HorizontalOptions="Center">
-            <CollectionView ItemsSource="{Binding ProductCategories}" Margin="20" HorizontalOptions="Center" EmptyView="Deze categorie bevat nog geen producten.">
+    <Grid ColumnSpacing="10" Padding="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Stroke="#C49B33" StrokeThickness="4" Padding="10" Margin="10" HorizontalOptions="Fill">
+            <CollectionView ItemsSource="{Binding ProductCategories}" Margin="20" HorizontalOptions="Fill" EmptyView="Deze categorie bevat nog geen producten.">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
                 </CollectionView.ItemsLayout>
@@ -41,6 +47,54 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+        </Border>
+
+        <!-- Right-side: products that do NOT have the currently selected category -->
+        <Border Grid.Column="1" Stroke="#C49B33" StrokeThickness="4" Padding="10" Margin="10" HorizontalOptions="Fill">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                
+
+                <!-- SearchBar for filtering the right-hand list -->
+                <SearchBar x:Name="AndereSearch"
+                           Grid.Row="1"
+                           Placeholder="Zoek producten..."
+                           SearchCommand="{Binding PerformSearchCommand}"
+                           SearchCommandParameter="{Binding Text, Source={x:Reference AndereSearch}}"
+                           Margin="6,0"/>
+
+                <!-- Bind to AvailableProducts and show product name + stock -->
+                <CollectionView Grid.Row="2" ItemsSource="{Binding AvailableProducts}" Margin="6" EmptyView="Geen producten beschikbaar.">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="m:Product">
+                            <Grid Padding="6">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference ProductCategoriesPage}, Path=BindingContext.AddProductToCategoryCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" HorizontalOptions="Start"/>
+                                <Label Grid.Column="1" Text="{Binding Stock, StringFormat='Aantal: {0}'}" VerticalOptions="Center" HorizontalOptions="End"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
         </Border>
     </Grid>
 </ContentPage>
