@@ -1,4 +1,4 @@
-﻿﻿using Grocery.Core.Interfaces.Repositories;
+﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
 
@@ -17,7 +17,9 @@ namespace Grocery.Core.Services
 
         public List<ProductCategory> GetAll()
         {
-            return _productCategoryRepository.GetAll();
+            var productCategories = _productCategoryRepository.GetAll();
+            FillService(productCategories);
+            return productCategories;
         }
 
         public List<ProductCategory> GetByAllOnCategoryId(int id)
@@ -25,6 +27,13 @@ namespace Grocery.Core.Services
             List<ProductCategory> productCategories = _productCategoryRepository.GetAll().Where(c => c.CategoryId == id).ToList();
             FillService(productCategories);
             return productCategories;
+        }
+
+        public ProductCategory Add(ProductCategory item)
+        {
+            var added = _productCategoryRepository.Add(item);
+            added.Product = _productRepository.Get(added.ProductId) ?? new Product(0, "", 0, 0);
+            return added;
         }
 
         private void FillService(List<ProductCategory> productCategory)
