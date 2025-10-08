@@ -10,7 +10,7 @@
 
     <Shell.TitleView>
         <Grid>
-            <Label Text="categorieën" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Label Text="Categorieën" FontSize="Large" HorizontalOptions="Center" VerticalOptions="Center" />
         </Grid>
     </Shell.TitleView>
 
